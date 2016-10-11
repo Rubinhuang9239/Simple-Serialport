@@ -13,13 +13,14 @@ http.listen(3000, function(){
     console.log("");
     console.log("---------------|  Roomba Testing  |-----------------");
     console.log("");
-    console.log("Server is on port 3001");
+    console.log("Server is on port 3000");
 });
 
 
 // console.log(serial);
 var port = new SerialPort("/dev/cu.usbmodem1411", {
   baudRate: 9600,
+  parser: SerialPort.parsers.readline("\n"),
 });
 
 

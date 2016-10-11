@@ -1,18 +1,49 @@
 <html>
-
+<script src="js/p5.js"></script>
 <script src="js/socket.io.js"></script>
+
+<body>
+Incoming Data:
+<br />
+<div id = "showData">
+waiting for the first buffer...
+</div>
+</body>
+
 <script>
+//socket.js
+
+var showData = document.getElementById("showData");
+
+var arduino = {
+	incomingData: null
+};
 
 var socket = io.connect('http://localhost:3000');
 
 socket.on("serialData",function(data){
-	console.log(data);
+	arduino.incomingData = data;
+	showData.innerHTML = arduino.incomingData;
 });
 
 </script>
 
-<body>
-hello
-</body>
+<script>
+//sketch.js
+
+function setup(){
+	createCanvas(200,200);
+	background(20);
+	noStroke();
+	fill(255,255,255,50);
+}
+
+function draw(){
+	background(20,20,20,20);
+	rectMode(CENTER);
+	rect(width/2,height/2, arduino.incomingData, arduino.incomingData);
+}
+
+</script>
 
 </html>
