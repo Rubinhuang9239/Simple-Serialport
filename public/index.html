@@ -1,0 +1,18 @@
+<html>
+
+<script src="js/socket.io.js"></script>
+<script>
+
+var socket = io.connect('http://localhost:3000');
+
+socket.on("serialData",function(data){
+	console.log(data);
+});
+
+</script>
+
+<body>
+hello
+</body>
+
+</html>
