@@ -12,5 +12,5 @@ $ node simpleSerial.js
 
 Now support multiple data exchange. Quick look here:
 
-<img src = "https://github.com/Rubinhuang9239/Simple-Serialport/master/blob/array.png">
+<img src = "https://github.com/Rubinhuang9239/Simple-Serialport/blob/master/array.png">
 
