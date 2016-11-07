@@ -1,49 +1,98 @@
+<!DOCTYPE html>
+
 <html>
-<script src="js/p5.js"></script>
-<script src="js/socket.io.js"></script>
 
-<body>
-Incoming Data:
-<br />
-<div id = "showData">
-waiting for the first buffer...
-</div>
-</body>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="user-scalable=no, initial-scale=1"/>
 
-<script>
-//socket.js
+	<title> Simple-Serial Demo </title>
 
-var showData = document.getElementById("showData");
+	<script src="js/p5.js"></script>
+	<script src="js/socket.io.js"></script>
 
-var arduino = {
-	incomingData: null
-};
+	<body>
+		<br />
+		Incoming Data(Array):
+		<p id = "showData">
+			waiting for the first buffer...
+		</p>
+		<p>
+		p5 draw only use the first data from the array
+		</p>
+	</body>
 
-var socket = io.connect('http://localhost:3000');
+	<script>
+	//socket.js
 
-socket.on("serialData",function(data){
-	arduino.incomingData = data;
-	showData.innerHTML = arduino.incomingData;
-});
+	var showData = document.getElementById("showData");
 
-</script>
+	var arduino = {
+		incomingData: null
+	};
 
-<script>
-//sketch.js
+	var socket = io.connect('http://localhost:3000');
 
-function setup(){
-	createCanvas(200,200);
-	background(20);
-	noStroke();
-	fill(255,255,255,50);
-}
+	socket.on("serialData",function(data){
+		arduino.incomingData = data;
+		showData.innerHTML = arduino.incomingData;
+	});
 
-function draw(){
-	background(20,20,20,20);
-	rectMode(CENTER);
-	rect(width/2,height/2, arduino.incomingData, arduino.incomingData);
-}
+	</script>
 
-</script>
+	<script>
+	//A simple P5 sketch
+
+	function setup(){
+		createCanvas(400,400);
+		background(20);
+		noStroke();
+		fill(0,255,255,50);
+	}
+
+	function draw(){
+		background(20,20,20,20);
+		rectMode(CENTER);
+		rect(width/2,height/2, parseInt(arduino.incomingData), parseInt(arduino.incomingData));
+	}
+
+	</script>
+
+	<div id = "source">
+		Source Code: <a href = "https://github.com/Rubinhuang9239/Simple-Serialport" >Follow Rubinhuang9239</a>
+	</div>
+
+	<style>
+
+		body,html{
+			margin: 0px;
+			padding: 0px;
+		}
+
+		body{
+			background-color: #444;
+			color: #FFF;
+			text-align: center;
+		}
+
+		canvas{
+			margin: auto;
+		}
+
+		#showData{
+			color: #FF9900;
+		}
+
+		#source{
+			height: 1.5em;
+			position: absolute;
+			bottom: 0px;
+			top:auto;
+			left: 0px;
+			right: 0px;
+			margin: auto;
+		}
+
+	</style>
 
 </html>

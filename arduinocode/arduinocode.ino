@@ -1,17 +1,47 @@
+//	   _____ _                 __          _____           _       __
+//	  / ___/(_)___ ___  ____  / /__       / ___/___  _____(_)___ _/ /
+//	  \__ \/ / __ `__ \/ __ \/ / _ \______\__ \/ _ \/ ___/ / __ `/ / 
+//	 ___/ / / / / / / / /_/ / /  __/_____/__/ /  __/ /  / / /_/ / /  
+//	/____/_/_/ /_/ /_/ .___/_/\___/     /____/\___/_/  /_/\__,_/_/   
+//	                /_/
+
+//Simple Serial written by Rubin Huang at NYU|ITP.
+//Arduino Demo Code.
+
 void setup() {
   Serial.begin(9600);
+  Serial.setTimeout(0);
 }
 
 void loop() {
     
-    int val = round( random(0,100) );
-    
-    if(Serial.available() > 0)    
-      
-      Serial.println(val);
-    
+    if(Serial.available() > 0){
+      printIntData(); // demo for recive and print int input.//
     }
     
-    delay(100);
+    delay(50);
 
 }
+
+void printIntData(){
+
+      //Create a storage array with dynamic size.//
+      const int msgSize = Serial.parseInt();
+      int dataIn[msgSize];
+      
+      //
+      for(int i = 0; i < msgSize; i++){
+        dataIn[i] = Serial.parseInt();
+      }
+      
+      //print the storage array.//
+      for(int i=0; i < sizeof(dataIn)/sizeof(int); i++){
+        Serial.print(dataIn[i]);
+        Serial.print(' ');
+      }
+      //Don't for get finish sign!
+      //See finish sign in Node.js code.//
+      Serial.print('\n');
+
+}
+
