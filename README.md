@@ -6,5 +6,5 @@ Simple serialport for front-end Dev.
 ```
 $ cd .../Simple-Serialport
 
-$ node nodeSerial.js
+$ node simpleSerial.js
 ```
