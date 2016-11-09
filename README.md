@@ -1,5 +1,5 @@
 # Simple-Serialport
-Simple serialport for front-end Dev.
+Simple serialport for Arduino based projects.
 
 
 ##Usage
@@ -11,6 +11,8 @@ $ node simpleSerial.js
 ##Update
 
 Now support multiple data exchange. Quick look here:
+
+You can send array from the node.js code, in the example the serial runs a buadrate of 9600 bps, support up to 6 ~ 7 intiger data in an array, if you want to send more data in an array, you can increase the baudrate higher. With the highest baudrate supported by regular Arduino(like UNO), 15 ~ 18 intigers can be send in an array appropriately.
 
 <img src = "https://github.com/Rubinhuang9239/Simple-Serialport/blob/master/array.png">
 
