@@ -58,7 +58,7 @@ if(portName != null){
 	console.log(portName);
 
 	var port = new SerialPort(portName, {
-	  baudRate: 9600,
+	  baudRate: 115200,
 	  parser: SerialPort.parsers.readline("\n"),
 	});
 
