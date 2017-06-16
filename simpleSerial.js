@@ -36,7 +36,7 @@ http.listen( httpPort, function(){
 });
 
 
-var portNameChoice = ["/dev/cu.usbmodem1411", "/dev/cu.usbmodem1421"];
+var portNameChoice = ["/dev/cu.usbmodem1411", "/dev/cu.usbmodem1421", "/dev/cu.usbmodem1451", "/dev/cu.usbmodem1461"];
 var portName = null;
 
 SerialPort.list(function (err, ports) {
