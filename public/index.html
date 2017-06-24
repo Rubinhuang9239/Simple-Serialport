@@ -31,7 +31,7 @@
 		incomingData: null
 	};
 
-	var socket = io.connect('http://localhost:3000');
+	var socket = io();
 
 	socket.on("serialData",function(data){
 		arduino.incomingData = data;

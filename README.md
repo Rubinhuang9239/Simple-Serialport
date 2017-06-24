@@ -6,6 +6,8 @@ Simple serialport for Arduino based projects.
 ```
 $ cd .../Simple-Serialport
 
+$ node npm install
+
 $ node simpleSerial.js
 ```
 ##Update

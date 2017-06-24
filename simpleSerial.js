@@ -36,7 +36,7 @@ http.listen( httpPort, function(){
 });
 
 
-var portNameChoice = ["/dev/cu.usbmodem1411", "/dev/cu.usbmodem1421", "/dev/cu.usbmodem1451", "/dev/cu.usbmodem1461"];
+var portNameChoice = ["/dev/cu.usbmodem1411", "/dev/cu.usbmodem1421", "/dev/cu.usbmodem1451", "/dev/cu.usbmodem1461", "/dev/cu.usbmodem14521", "/dev/cu.usbmodem143411"];
 var portName = null;
 
 SerialPort.list(function (err, ports) {
@@ -127,6 +127,8 @@ var io = require('socket.io')(http);
 var mySocket = null;
 
 io.on('connection', function(socket){
+
+	console.log("connection" + socket.id);
 
 	mySocket = socket;
 

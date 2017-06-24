@@ -9,8 +9,12 @@
 //Arduino Demo Code.
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.setTimeout(0);
+
+  //Add following for Uno
+  while(!Serial){};
+  Serial.println("ready");
 }
 
 void loop() {
@@ -19,7 +23,7 @@ void loop() {
       printIntData(); // demo for recive and print int input.//
     }
     
-    delay(50);
+    delay(80);
 
 }
 
