@@ -4,6 +4,7 @@
   "description": "simple serialport node.js to front-end js sample code",
   "main": "simpleSerial.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -20,8 +21,8 @@
   },
   "homepage": "https://github.com/Rubinhuang9239/Simple-Serialport#readme",
   "dependencies": {
-    "express": "^4.15.3",
-    "serialport": "^4.0.7",
-    "socket.io": "^2.0.3"
+    "express": "^4.16.4",
+    "serialport": "^7.1.4",
+    "socket.io": "^2.2.0"
   }
 }
