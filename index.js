@@ -17,18 +17,17 @@
 //WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 const SerialPort = require("serialport");
-const Readline = require('@serialport/parser-readline')
-const app = require('express')();
 const express = require('express');
-const http = require('http').Server(app);
+const app = express();
+const socketIO = require('socket.io')
+const http = require('http');
+const httpServer = http.Server(app);
 
 //----------------Route--------------------//
 
-app.use(express.static('public'));
-
 const httpPort = 3000;
-
-http.listen( httpPort, function(){
+app.use(express.static('public'));
+httpServer.listen( httpPort, function(){
   	console.log("");
     console.log("");
     console.log("---------------| Simple Seiral Example |-----------------");
@@ -36,97 +35,88 @@ http.listen( httpPort, function(){
     console.log("Server is on port 3000");
 });
 
+//-----------------Socket.io----------------//
 
-const portNameChoice = ["/dev/cu.usbmodem1411", "/dev/cu.usbmodem1421", "/dev/cu.usbmodem1451", "/dev/cu.usbmodem1461", "/dev/tty.usbmodem146201", "/dev/cu.usbmodem143411"];
-let portName = null;
+let mySocket = undefined;
 
-SerialPort.list(function (err, ports) {
-  ports.forEach(port => {
-    for(i=0; i < portNameChoice.length; i++){
-      if(portNameChoice[i] === port.comName){
-        portName = port.comName;
-      }
-    }
+const io = socketIO(httpServer);
+io.on('connection', (socket) => {
+	console.log(`connection: ${socket.id}`);
+	mySocket = socket;
+});
 
-	});
+//----------------Serial--------------------//
+const portNameChoice = ["/dev/tty.usbmodem146201"];
+const baudRate = 9600;
+const lineEnding = '\n';
+let sendData = [0,0,0,0,0,0];
 
-if(portName !== null){
-
-	console.log(portName);
-
-	const port = new SerialPort(portName, {
-		baudRate: 115200,
-		parser: new Readline()
-	});
-
-	port.on('open', function() {
-		console.log("opened");
-
-		setTimeout(function(){
-			port.write("0");
-			console.log("Hand shake say hi");
-		},2000);	
-
-	});
-
-	let serialData = null;
-
-	// const parser = port.pipe(new Readline())
-
-	port.on( 'data', data => {
-
-			serialData = data.toString();
-		  console.log('\x1b[33m'+"Serial Data>> "+serialData+'\x1b[0m');
-
-			if(mySocket != undefined){
-				mySocket.emit("serialData",serialData);
-			}
-
-		let sendingMSG = '';// sendVal.length + ","; // sendVal is defined as an array, scroll a little bit down to see it.
-
-		//-- Form the message for sending to the serial port --//
-		for(let i = 0; i < sendVal.length; i++){
-
-
-			//-- update the sendVal randomly --//
-
-			sendVal[i] = Math.floor(Math.random()*100);
-
-			//-- pack! --//
-			if( (sendVal.length > 1) && (i < sendVal.length - 1) ){
-				sendingMSG += sendVal[i] + ",";
-			}
-			else if( i == sendVal.length - 1 ){
-				sendingMSG += sendVal[i];
-			}
-
+const searchPort = () =>{
+	SerialPort.list( (err, ports) => {
+		if(err){
+			console.log(err);
+			return;
 		}
-		port.write( sendingMSG );
+	
+		let portName = undefined;
+		ports.some( port => {
+			for(const choice of portNameChoice){
+				if(port.comName === choice){
+					portName = port.comName;
+					return true;
+				}
+			}
+		});
+	
+		console.log( portName? `Initial connection to: ${portName}`: `No desired port founded.`)
+	
+		if(portName){
+			setupSerialConnection(portName, baudRate, lineEnding);
+		}
+	});	
+}
 
-	});
+const setupSerialConnection = (inputPortName, inputBaudRate, inputLineEnding) =>{
+	const myPort = new SerialPort(inputPortName, {baudRate:inputBaudRate});// open the port
+	const parser = new SerialPort.parsers.Readline(inputLineEnding);	// make instance of Readline parser
+	myPort.pipe(parser);													// pipe the serial stream to the parser
+
+	// these are the definitions for the serial events:
+	myPort.on('open', ()=>{showPortOpen(myPort)});    // called when the serial port opens
+	myPort.on('close', showPortClose);  // called when the serial port closes
+	myPort.on('error', showError);   // called when there's an error with the serial port
+	parser.on('data', data=>{readSerialData(data,myPort)});  // called when there's new data incoming
 
 }
 
-});
+const showPortOpen = (port) => {
+	console.log('port open. Data rate: ' + port.baudRate);
+	setTimeout(()=>{
+		port.write(`${sendData.length},${sendData.toString()},`);
+	},2000); // initial the handshake
+}
 
-//-----------------Demo_SendVal----------------//
+const readSerialData = (data, port) => {
+		console.log(`serial data ==> ${data}`);
+		if(mySocket && mySocket.connected){
+			mySocket.emit('serialData', data);
+		}
+		sendData = sendData.map(()=>{
+				return Math.round(Math.random()*300);
+		})
+		port.write(
+				`${sendData.length},${sendData.toString()},`
+		);
+}
 
-let sendVal = [0,0,0,0];
+const showPortClose = (portName) => {
+	console.log(`Port closed: ${portName}`);
+}
 
+const showError = (error) => {
+	console.log('Serial port error: ' + error);
+}
 
-//-----------------Socket.io----------------//
-
-const io = require('socket.io')(http);
-
-let mySocket = null;
-
-io.on('connection', (socket) => {
-
-	console.log("connection" + socket.id);
-
-	mySocket = socket;
-
-});
-
-
+// Kick off
+searchPort();
 
