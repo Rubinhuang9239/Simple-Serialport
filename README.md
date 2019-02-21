@@ -1,5 +1,5 @@
 # Simple-Serialport
-Simple serialport for Arduino based projects.
+A simple node.js serial port communication code for Arduino based projects to send back and forth multiple data, added hand shack.
 
 
 ## Usage
