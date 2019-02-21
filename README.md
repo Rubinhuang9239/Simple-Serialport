@@ -2,7 +2,7 @@
 Simple serialport for Arduino based projects.
 
 
-##Usage
+## Usage
 ```Shell
 # Change to the working directory
 $ cd .../Simple-Serialport
@@ -13,7 +13,7 @@ $ npm install
 # Run the code
 $ npm start
 ```
-##Update
+## Update
 
 Now support multiple data exchange. Quick look here:
 
