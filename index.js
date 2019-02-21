@@ -16,16 +16,17 @@
 //IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 //WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-var SerialPort = require("serialport");
-var app = require('express')();
-var express = require('express');
-var http = require('http').Server(app);
+const SerialPort = require("serialport");
+const Readline = require('@serialport/parser-readline')
+const app = require('express')();
+const express = require('express');
+const http = require('http').Server(app);
 
 //----------------Route--------------------//
 
 app.use(express.static('public'));
 
-var httpPort = 3000;
+const httpPort = 3000;
 
 http.listen( httpPort, function(){
   	console.log("");
@@ -36,32 +37,27 @@ http.listen( httpPort, function(){
 });
 
 
-var portNameChoice = ["/dev/cu.usbmodem1411", "/dev/cu.usbmodem1421", "/dev/cu.usbmodem1451", "/dev/cu.usbmodem1461", "/dev/cu.usbmodem14521", "/dev/cu.usbmodem143411"];
-var portName = null;
+const portNameChoice = ["/dev/cu.usbmodem1411", "/dev/cu.usbmodem1421", "/dev/cu.usbmodem1451", "/dev/cu.usbmodem1461", "/dev/tty.usbmodem146201", "/dev/cu.usbmodem143411"];
+let portName = null;
 
 SerialPort.list(function (err, ports) {
-  ports.forEach(function(port) {
-
-    for(i=0; i < portNameChoice.length ;i++){
-
-      if(portNameChoice[i] == port.comName){
+  ports.forEach(port => {
+    for(i=0; i < portNameChoice.length; i++){
+      if(portNameChoice[i] === port.comName){
         portName = port.comName;
-
       }
-
     }
 
 	});
 
-if(portName != null){
+if(portName !== null){
 
 	console.log(portName);
 
-	var port = new SerialPort(portName, {
-	  baudRate: 115200,
-	  parser: SerialPort.parsers.readline("\n"),
+	const port = new SerialPort(portName, {
+		baudRate: 115200,
+		parser: new Readline()
 	});
-
 
 	port.on('open', function() {
 		console.log("opened");
@@ -73,29 +69,28 @@ if(portName != null){
 
 	});
 
-	var serialData = null;
+	let serialData = null;
 
-	port.on( 'data', function(data){
+	// const parser = port.pipe(new Readline())
+
+	port.on( 'data', data => {
 
 			serialData = data.toString();
-
-			process.stdout.clearLine();
-		    process.stdout.cursorTo(0);
-		    process.stdout.write('\x1b[33m'+"Serial Data>> "+serialData+'\x1b[0m');
+		  console.log('\x1b[33m'+"Serial Data>> "+serialData+'\x1b[0m');
 
 			if(mySocket != undefined){
 				mySocket.emit("serialData",serialData);
 			}
 
-		var sendingMSG = sendVal.length + ","; // sendVal is defined as an array, scroll a little bit down to see it.
+		let sendingMSG = '';// sendVal.length + ","; // sendVal is defined as an array, scroll a little bit down to see it.
 
 		//-- Form the message for sending to the serial port --//
-		for(var i = 0; i < sendVal.length; i++){
+		for(let i = 0; i < sendVal.length; i++){
 
 
 			//-- update the sendVal randomly --//
 
-			sendVal[i] = Math.floor(Math.random()*400);
+			sendVal[i] = Math.floor(Math.random()*100);
 
 			//-- pack! --//
 			if( (sendVal.length > 1) && (i < sendVal.length - 1) ){
@@ -106,7 +101,6 @@ if(portName != null){
 			}
 
 		}
-
 		port.write( sendingMSG );
 
 	});
@@ -117,16 +111,16 @@ if(portName != null){
 
 //-----------------Demo_SendVal----------------//
 
-var sendVal = [0,0,0,0];
+let sendVal = [0,0,0,0];
 
 
 //-----------------Socket.io----------------//
 
-var io = require('socket.io')(http);
+const io = require('socket.io')(http);
 
-var mySocket = null;
+let mySocket = null;
 
-io.on('connection', function(socket){
+io.on('connection', (socket) => {
 
 	console.log("connection" + socket.id);
 
