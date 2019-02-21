@@ -12,7 +12,7 @@ $ npm install
 
 //This will install all package you need to run the code.
 
-$ node simpleSerial.js
+$ npm start
 
 //Run the code
 ```
