@@ -3,18 +3,15 @@ Simple serialport for Arduino based projects.
 
 
 ##Usage
-```
+```Shell
+# Change to the working directory
 $ cd .../Simple-Serialport
 
-//Change to the working directory
-
+# This will install all package you need to run the code.
 $ npm install
 
-//This will install all package you need to run the code.
-
+#Run the code
 $ npm start
-
-//Run the code
 ```
 ##Update
 
