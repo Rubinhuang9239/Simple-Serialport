@@ -10,7 +10,7 @@ $ cd .../Simple-Serialport
 # This will install all package you need to run the code.
 $ npm install
 
-#Run the code
+# Run the code
 $ npm start
 ```
 ##Update
