@@ -23,7 +23,7 @@
   "homepage": "https://github.com/Rubinhuang9239/Simple-Serialport#readme",
   "dependencies": {
     "express": "^4.16.4",
-    "serialport": "^7.1.4",
-    "socket.io": "^2.2.0"
+    "serialport": "^9.2.0",
+    "socket.io": "^4.1.3"
   }
 }

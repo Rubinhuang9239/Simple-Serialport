@@ -16,7 +16,7 @@
 //IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
 //WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-const SerialPort = require("serialport");
+const SerialPort = require('serialport');
 const express = require('express');
 const app = express();
 const socketIO = require('socket.io')
@@ -28,11 +28,11 @@ const httpServer = http.Server(app);
 const httpPort = 3000;
 app.use(express.static('public'));
 httpServer.listen( httpPort, function(){
-  	console.log("");
-    console.log("");
-    console.log("---------------| Simple Seiral Example |-----------------");
-    console.log("");
-    console.log("Server is on port 3000");
+	console.log("");
+	console.log("");
+	console.log("---------------| Simple Seiral Example |-----------------");
+	console.log("");
+	console.log("Server is on port 3000");
 });
 
 //-----------------Socket.io----------------//
@@ -46,34 +46,31 @@ io.on('connection', (socket) => {
 });
 
 //----------------Serial--------------------//
-const portNameChoice = ["/dev/tty.usbmodem146201"];
+
+// serial configurations
+
+const portNameChoice = ['/dev/tty.usbmodem143301'];
 const baudRate = 9600;
 const lineEnding = '\n';
-let sendData = [0,0,0,0,0,0];
 
-const searchPort = () =>{
-	SerialPort.list( (err, ports) => {
-		if(err){
-			console.log(err);
-			return;
-		}
-	
-		let portName = undefined;
+
+const searchPort = async() =>{
+	try{
+		const ports = await SerialPort.list();
+		if(!ports || ports.length <= 0) { return; }
+		
 		ports.some( port => {
+			console.log(port.path);
 			for(const choice of portNameChoice){
-				if(port.comName === choice){
-					portName = port.comName;
-					return true;
+				if(port.path === choice){
+					setupSerialConnection(port.path, baudRate, lineEnding);
+					return;
 				}
 			}
 		});
-	
-		console.log( portName? `Initial connection to: ${portName}`: `No desired port founded.`)
-	
-		if(portName){
-			setupSerialConnection(portName, baudRate, lineEnding);
-		}
-	});	
+	} catch (err) {
+		console.log(err);
+	}
 }
 
 const setupSerialConnection = (inputPortName, inputBaudRate, inputLineEnding) =>{
@@ -92,21 +89,22 @@ const setupSerialConnection = (inputPortName, inputBaudRate, inputLineEnding) =>
 const showPortOpen = (port) => {
 	console.log('port open. Data rate: ' + port.baudRate);
 	setTimeout(()=>{
+		console.log('init hand shake')
 		port.write(`${sendData.length},${sendData.toString()},`);
-	},2000); // initial the handshake
+	}, 2000); // initial the handshake
 }
 
 const readSerialData = (data, port) => {
-		console.log(`serial data ==> ${data}`);
-		if(mySocket && mySocket.connected){
-			mySocket.emit('serialData', data);
-		}
-		sendData = sendData.map(()=>{
-				return Math.round(Math.random()*300);
-		})
-		port.write(
-				`${sendData.length},${sendData.toString()},`
-		);
+	console.log(`serial data ==> ${data}`);
+	if(mySocket && mySocket.connected){
+		mySocket.emit('serialData', data);
+	}
+	sendData = sendData.map(()=>{
+		return Math.round(Math.random()*300);
+	})
+	port.write(
+		`${sendData.length},${sendData.toString()},`
+	);
 }
 
 const showPortClose = (portName) => {
